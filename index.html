@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>index</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <link rel="stylesheet" href="src/style/dialog.css">
 </head>
 <body>
     <script src="src/dialog.js"></script>
     <script>
-        Dialog('alert');
+        new Dialog({content: 'hello world', height: '500'});
 
 
     </script>
