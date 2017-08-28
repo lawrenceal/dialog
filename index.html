@@ -8,15 +8,82 @@
             margin: 0;
             padding: 0;
         }
+
+        ul{
+            list-style: none;
+            margin: 20px;
+        }
+
+        ul li{
+            float: left;
+            margin-left: 20px;
+        }
+
+        button{
+            width: 60px;
+            height: 35px;
+        }
     </style>
     <link rel="stylesheet" href="src/style/dialog.css">
 </head>
 <body>
+    <ul>
+        <li><button id="alert">alert</button></li>
+        <li><button id="confirm">confirm</button></li>
+        <li><button id="prompt">prompt</button></li>
+    </ul>
     <script src="src/dialog.js"></script>
     <script>
-        new Dialog({content: 'hello world', height: '500'});
+        document.getElementById('alert').addEventListener('click', () => {
+            new Dialog({
+                content: 'alert',
+                buttons: [
+                    {
+                        name: 'confirm',
+                        callback: function (dialog) {
+                            console.log('alert');
+                            dialog.close();
+                        }
+                    }
+                ]
+            });
+        }, false);
 
+        document.getElementById('confirm').addEventListener('click', () => {
+            new Dialog({
+                content: 'confirm',
+                confirm: function() {
+                    console.log('confirm');
+                },
+                cancel: function(){
+                    console.log('cancel');
+                }
+            });
+        }, false);
 
+        document.getElementById('prompt').addEventListener('click', () => {
+
+            new Dialog({
+                content: '<div>username: <input type="text" id="username"></div>',
+                buttons: [
+                    {
+                        name: 'confirm',
+                        callback: function(dialog){
+                            let username = document.getElementById('username').value;
+                            console.log(username);
+                            dialog.close();
+                        }
+                    },
+                    {
+                        name: 'cancel',
+                        callback: function(dialog){
+                            dialog.close();
+                        }
+                    }
+                ]
+            });
+
+        }, false);
     </script>
 </body>
 </html>

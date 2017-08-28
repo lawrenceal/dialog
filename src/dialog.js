@@ -27,7 +27,11 @@
     const isType = (target, type) => Object.prototype.toString.call(target).toLowerCase() === `[object ${type}]`;
 
     const isPlainObject = (obj) => {
-        if(obj && !isType(obj, 'object')){
+        if(!obj){
+            return false;
+        }
+
+        if(!isType(obj, 'object')){
             return false;
         }
 
@@ -42,17 +46,17 @@
         return typeof constructor === 'function' && constructor === Object;
     };
 
-    const extend = (target, ...args) => {
-        if(!isType(target, 'object') && !isType(target, 'function')){
+    const deepExtend = (target, ...args) => {
+        if(typeof target !== 'object' && typeof target !== 'function'){
             target = {};
         }
 
         for(let item of args){
-            let option = args[item];
+            let option = item;
 
             if(option != null){
 
-                for(let key of option){
+                for(let key of Object.keys(option)){
                     let copy = option[key],
                         src = target[key],
                         copyIsArray = false;
@@ -77,6 +81,13 @@
         return target;
     };
 
+    const extend = (sub, sup) => {
+        for(let key in sup){
+            sub[key] = sup[key];
+        }
+        return sub;
+    };
+
     const getBody = () => document.body || document.getElementsByName('body')[0];
 
     class Dialog{
@@ -94,9 +105,13 @@
             create.call(this, this.options);
         }
 
-        close(nodes){
-            this.options.instance = null;
+        close(){
+            let nodes = this.options.instance, buttons = nodes.querySelectorAll('button');
+            for(let button of buttons){
+                button.onclick = null;
+            }
             getBody().removeChild(nodes);
+            this.options.instance = null;
         }
     }
 
@@ -112,8 +127,13 @@
         if(!options.showClose){
             dialogHeaderEle.removeChild(dialogCancelEle);
         }else{
-            dialogCancelEle.addEventListener('click', () => {
-                this.close(nodes);
+            dialogCancelEle.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                this.close();
+                if(isType(options.cancel, 'function')){
+                    options.cancel();
+                }
             }, false);
         }
 
@@ -123,13 +143,16 @@
             let buttonEle = document.createElement('button');
             buttonEle.innerHTML = button.name;
 
-            buttonEle.onclick = () => {
+            buttonEle.onclick = (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
                 if(isType(button.callback, 'function')){
 
                     //TODO param
                     button.callback(this);
                 }else{
-                    this.close(nodes);
+                    this.close();
                     if(button.name === CONFIRM && isType(options.confirm, 'function')){
 
                         //TODO param
@@ -146,7 +169,7 @@
         }
 
         getBody().appendChild(nodes);
-        this.options.instance = this;
+        this.options.instance = nodes;
     }
 
     function getNode(){
