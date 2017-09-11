@@ -41,7 +41,7 @@
             return true;
         }
 
-        let constructor = !obj.hasOwnProperty('constructor') && obj.constructor;
+        let constructor = proto.hasOwnProperty('constructor') && proto.constructor;
 
         return typeof constructor === 'function' && constructor === Object;
     };
