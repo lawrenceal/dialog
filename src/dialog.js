@@ -70,7 +70,7 @@
                             clone = isPlainObject(src) ? src : {};
                         }
 
-                        target[key] = extend(clone, copy);
+                        target[key] = deepExtend(clone, copy);
                     }else if(copy !== undefined){
                         target[key] = copy;
                     }
